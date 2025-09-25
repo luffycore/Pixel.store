@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MobileHub - Premium Mobile Devices</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/app.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #1a56db; /* Changed to blue */
+            --secondary-color: #ffffff;
+            --light-gray: #f5f5f5;
+            --medium-gray: #cccccc;
+            --dark-gray: #333333;
+            --star-color: #FFD700;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+            line-height: 1.6;
+            color: var(--dark-gray);
+        }
+        
+        .navbar {
+            background-color: var(--primary-color); /* Now blue */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Updated Hero Section Styles */
+        .hero-section {
+            position: relative;
+            padding: 100px 0;
+            overflow: hidden;
+            color: white;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://i.postimg.cc/2jXCTJHh/image.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        .product-card {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--medium-gray);
+            background-color: var(--secondary-color);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image-container {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-gray);
+            padding: 20px;
+        }
+        
+        .product-image-container img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image-container img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 16px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .stars {
+            color: var(--star-color);
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        .review-count {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+        
+        .add-to-cart {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: auto;
+        }
+        
+        .add-to-cart:hover {
+            background: var(--dark-gray);
+        }
+        
+        /* Profile Icon Styles */
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-icon {
+            cursor: pointer;
+            color: var(--secondary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--secondary-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 10px 0;
+            display: none;
+            z-index: 1000;
+            min-width: 200px;
+            margin-top: 10px;
+            border: 1px solid var(--medium-gray);
+        }
+        
+        .profile-dropdown.show {
+            display: block;
+        }
+        
+        .profile-dropdown a {
+            display: block;
+            color: var(--dark-gray);
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .profile-dropdown a:hover {
+            background: var(--light-gray);
+            color: var(--primary-color);
+            padding-left: 25px;
+        }
+        
+        .profile-icon-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--secondary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-icon-image:hover {
+            border-color: var(--medium-gray);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-gray) 100%);
+            padding: 80px 0;
+        }
+        
+        /* Search Bar */
+        .search-bar {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: var(--secondary-color);
+        }
+        
+        .search-bar:focus-within {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Category Sections */
+        .category-section {
+            transition: all 0.3s ease;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--dark-gray) 0%, var(--primary-color) 100%);
+        }
+        
+        .category-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--light-gray);
+        }
+        
+        footer a {
+            transition: color 0.2s ease;
+        }
+        
+        footer a:hover {
+            color: var(--medium-gray);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-image {
+                margin-top: 30px;
+            }
+            
+            .profile-dropdown {
+                right: -50px;
+            }
+            
+            .category-header {
+                font-size: 24px;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        /* No results message */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            background: var(--secondary-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Back to top button */
+        .back-to-top {
+            transition: all 0.3s ease;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .back-to-top.hide {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+        }
+        
+        /* Smooth transitions */
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Cart icon styles */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            color: white;
+            margin-right: 20px;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ff3d00;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="#home" class="text-white text-2xl font-bold flex items-center">
+                        <img src="https://i.postimg.cc/28RrPvDS/removebg-preview.png" alt="MobileHub Logo" class="h-12 mr-2">
+                        MobileHub
+                    </a>
+                </div>
+                
+                <!-- Add margin here to create space between logo and nav links -->
+                <div class="hidden md:flex items-center space-x-8 ml-12">
+                    <a href="#home" class="text-white hover:text-gray-300 transition">Home</a>
+                    <a href="#sellers" class="text-white hover:text-gray-300 transition">Shop</a>
+                    <a href="#contact" class="text-white hover:text-gray-300 transition">Contact</a>
+                </div>
+                
+                <div class="flex items-center ml-auto">
+                    <!-- Cart Icon -->
+                    <div class="cart-icon mr-4" onclick="window.location.href='cart.html'">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                    
+                    <!-- Profile Icon -->
+                    <div class="profile-container">
+                        <div class="profile-icon" id="profileIcon">
+                            <img src="https://i.postimg.cc/28RrPvDS/removebg-preview.png" alt="Profile Picture" id="profile-icon-image" class="profile-icon-image">
+                        </div>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <a href="profile.html"><i class="fas fa-user mr-2"></i>View Profile</a>
+                            <a href="#" id="logoutButton"><i class="fas fa-sign-out-alt mr-2"></i>Log Out</a>
+                            <div id="user-greeting" class="text-sm text-gray-600 px-4 py-2 border-t mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center ml-4">
+                    <button class="text-white focus:outline-none" id="mobile-menu-button">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile menu -->
+            <div class="md:hidden hidden pt-4" id="mobile-menu">
+                <a href="#home" class="block py-2 text-white hover:text-gray-300 transition">Home</a>
+                <a href="#sellers" class="block py-2 text-white hover:text-gray-300 transition">Shop</a>
+                <a href="#contact" class="block py-2 text-white hover:text-gray-300 transition">Contact</a>
+                <a href="cart.html" class="block py-2 text-white hover:text-gray-300 transition">Cart</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section text-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0 animate-fade-in">
+                    <p class="text-gray-300 font-semibold mb-2 text-lg">NEW COLLECTION</p>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">SMART - TECH<br>Collection 2025</h1>
+                    <p class="text-lg mb-8 max-w-lg">
+                        Experience cutting-edge technology with our premium selection of smartphones, tablets, 
+                        and accessories. Meticulously curated to bring you the latest innovations—powerful, 
+                        stylish, and designed for modern life.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#sellers" class="bg-white text-black font-bold py-3 px-8 rounded-full hover:bg-gray-200 transition inline-flex items-center justify-center">
+                            SHOP NOW <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="#contact" class="border-2 border-white text-white font-bold py-3 px-8 rounded-full hover:bg-white hover:text-black transition inline-flex items-center justify-center">
+                            CONTACT US
+                        </a>
+                    </div>
+                    <div class="flex mt-8 space-x-4">
+                        <a href="https://www.facebook.com/" class="text-white hover:text-gray-300 transition"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="https://twitter.com/i/flow/signup" class="text-white hover:text-gray-300 transition"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="https://in.pinterest.com/" class="text-white hover:text-gray-300 transition"><i class="fab fa-pinterest-p text-xl"></i></a>
+                        <a href="https://www.instagram.com/bomi.diy/" class="text-white hover:text-gray-300 transition"><i class="fab fa-instagram text-xl"></i></a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center animate-fade-in hero-image">
+                    <img src="https://i.postimg.cc/28RrPvDS/removebg-preview.png" alt="Mobile Devices" class="max-w-md w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Bar -->
+    <div class="container mx-auto px-4 my-12">
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden search-bar">
+            <div class="flex items-center px-4 py-3">
+                <svg class="w-6 h-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" id="searchBar" 
+                    class="flex-grow outline-none text-lg placeholder-gray-400" 
+                    placeholder="Search for smartphones, tablets, accessories..." 
+                    onkeypress="handleKeyPress(event)">
+                <button onclick="searchProducts()" 
+                    class="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition font-semibold ml-2 smooth-transition">
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="container mx-auto py-12 px-4" id="sellers">
+        <h2 class="text-4xl font-bold mb-12 text-center text-gray-800">Shop by Category</h2>
+
+        <!-- Smartphones Section -->
+        <div class="category-section p-8 rounded-xl shadow-xl mb-16 animate-fade-in">
+            <h2 class="text-3xl font-extrabold text-white mb-8 text-center tracking-wider uppercase category-header">
+                <i class="fas fa-mobile-alt mr-2"></i> Smartphones <i class="fas fa-mobile-alt ml-2"></i>
+            </h2>
+            <div id="smartphone-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-4 bg-white rounded-lg shadow-lg">
+                <!-- Smartphones will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Tablets Section -->
+        <div class="category-section p-8 rounded-xl shadow-xl mb-16 animate-fade-in" style="animation-delay: 0.1s;">
+            <h2 class="text-3xl font-extrabold text-white mb-8 text-center tracking-wider uppercase category-header">
+                <i class="fas fa-tablet-alt mr-2"></i> Tablets <i class="fas fa-tablet-alt ml-2"></i>
+            </h2>
+            <div id="tablet-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-4 bg-white rounded-lg shadow-lg">
+                <!-- Tablets will be loaded here -->
+            </div>
+        </div>
+
+       
+
+        
+
+        <!-- No Results Message (hidden by default) -->
+        <div id="noResults" class="hidden no-results">
+            <i class="fas fa-search fa-3x text-gray-400 mb-4"></i>
+            <h3 class="text-2xl font-bold text-gray-700 mb-2">No Products Found</h3>
+            <p class="text-gray-600 mb-4">We couldn't find any products matching your search.</p>
+            <button onclick="resetSearch()" class="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition font-semibold smooth-transition">
+                Show All Products
+            </button>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">📍 Contact Us</h2>
+            <div class="bg-white shadow-2xl rounded-xl overflow-hidden flex flex-col md:flex-row">
+                <!-- Map Section -->
+                <div class="w-full md:w-1/2 h-96 md:h-auto">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.121169986175!2d73.90618951442687!3d18.568575172551647!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c131ed5b54a7%3A0xad718b8b2c93d36d!2sSky%20Vista!5e0!3m2!1sen!2sin!4v1654257749399!5m2!1sen!2sin"
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" class="min-h-96">
+                    </iframe>
+                </div>
+                <!-- Contact Form Section -->
+                <div class="w-full md:w-1/2 p-8 flex flex-col justify-center">
+                    <h3 class="text-2xl font-semibold text-gray-700 mb-6">Get in Touch</h3>
+                    <form id="contactForm" class="space-y-4">
+                        <div>
+                            <label for="name" class="block text-gray-600 font-medium mb-1">Name</label>
+                            <input type="text" id="name" placeholder="Your Name" required
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-gray-600 font-medium mb-1">Email</label>
+                            <input type="email" id="email" placeholder="Your Email" required
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-gray-600 font-medium mb-1">Message</label>
+                            <textarea id="message" rows="4" placeholder="Your Message" required
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"></textarea>
+                        </div>
+                        <button type="submit" 
+                            class="bg-black text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 shadow-md w-full smooth-transition">
+                            <i class="fas fa-paper-plane mr-2"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="bg-black text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
+            <p class="mb-8 max-w-2xl mx-auto">Get the latest updates on new products, special offers, and tech news delivered to your inbox.</p>
+            <div class="max-w-md mx-auto flex">
+                <input type="email" id="newsletterEmail" placeholder="Your email address" 
+                    class="flex-grow p-3 rounded-l-lg focus:outline-none text-gray-800">
+                <button class="bg-white text-black font-bold py-3 px-6 rounded-r-lg hover:bg-gray-200 transition smooth-transition">
+                    Subscribe
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <img src="https://i.postimg.cc/28RrPvDS/removebg-preview.png" alt="MobileHub Logo" class="h-12 mb-4">
+                    <p class="mb-4">The customer is at the heart of our unique business model, which includes design.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/" class="hover:text-gray-400 transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.twitter.com/" class="hover:text-gray-400 transition"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/" class="hover:text-gray-400 transition"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.pinterest.com/" class="hover:text-gray-400 transition"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-400">SHOPPING</h4>
+                    <ul class="space-y-2">
+                        <li><a href="smartphones.html" class="hover:text-gray-400 transition">Smartphones</a></li>
+                        <li><a href="tablets.html" class="hover:text-gray-400 transition">Tablets</a></li>
+                        <li><a href="accessories.html" class="hover:text-gray-400 transition">Accessories</a></li>
+                        <li><a href="wearables.html" class="hover:text-gray-400 transition">Wearables</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-400">CUSTOMER SERVICE</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#contact" class="hover:text-gray-400 transition">Contact Us</a></li>
+                        <li><a href="#payment.html" class="hover:text-gray-400 transition">Payment Method</a></li>
+                        <li><a href="#cod.html" class="hover:text-gray-400 transition">Delivery</a></li>
+                        <li><a href="https://happyreturns.com/" class="hover:text-gray-400 transition">Return and Exchange</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-400">CONTACT INFO</h4>
+                    <ul class="space-y-2">
+                        <li><i class="fas fa-map-marker-alt mr-2"></i> Tech Street, Mumbai</li>
+                        <li><i class="fas fa-phone mr-2"></i> +91 667943884</li>
+                        <li><i class="fas fa-envelope mr-2"></i> info@mobilehub.com</li>
+                        <li><i class="fas fa-clock mr-2"></i> Mon-Sat: 8AM - 8PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 text-center text-gray-400">
+                <p>&copy; 2025 MobileHub. All rights reserved. Design and Code by Krishna & Nitesh</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-6 right-6 bg-black text-white p-3 rounded-full shadow-lg hover:bg-gray-800 transition back-to-top hide smooth-transition">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Product data
+        const products = [
+            { 
+                name: "iPhone 15 Pro", 
+                category: "Smartphones", 
+                price: 99999, 
+                image: "https://i.postimg.cc/50S6631p/iphone-15-pro.jpg",
+                description: "The latest iPhone with titanium design, A17 Pro chip, and advanced camera system. Features Dynamic Island and all-day battery life.",
+                rating: 5,
+                reviews: 124
+            },
+            { 
+                name: "Samsung Galaxy S24", 
+                category: "Smartphones", 
+                price: 14999, 
+                image: "https://i.postimg.cc/mgp3rTVh/Samsung-Galaxy-S24.jpg",
+                description: "Powerful Android smartphone with AI features, stunning display, and professional-grade cameras. Water and dust resistant.",
+                rating: 5,
+                reviews: 98
+            },
+            { 
+                name: "Google Pixel 7 A", 
+                category: "Smartphones", 
+                price: 3999, 
+                image: "https://i.postimg.cc/qMDVp3fK/pixel.png",
+                description: "Pure Android experience with Google's Tensor G3 chip. Outstanding camera performance with AI editing features.",
+                rating: 4,
+                reviews: 132
+            },
+            { 
+                name: "OnePlus 12", 
+                category: "Smartphones", 
+                price: 5999, 
+                image: "https://i.postimg.cc/Hs24fwyw/One-Plus-12.jpg",
+                description: "Flagship killer with Snapdragon 8 Gen 3, Hasselblad camera, and ultra-fast charging. Smooth performance with OxygenOS.",
+                rating: 4,
+                reviews: 85
+            },
+            { 
+                name: "Xiaomi 14", 
+                category: "Smartphones", 
+                price: 9999, 
+                image: "https://i.postimg.cc/YS46GTyR/Xiaomi-14.jpg",
+                description: "Premium smartphone with Leica cameras, powerful processor, and elegant design. Excellent value for money.",
+                rating: 5,
+                reviews: 121
+            },
+            { 
+                name: "Vivo X100", 
+                category: "Smartphones", 
+                price: 5999, 
+                image: "https://i.postimg.cc/hGH99MkB/Vivo-X100.jpg",
+                description: "Camera-focused smartphone with ZEISS optics, MediaTek Dimensity 9300, and stunning AMOLED display.",
+                rating: 4,
+                reviews: 72
+            },
+            { 
+                name: "iPad Pro 12.9", 
+                category: "Tablets", 
+                price: 109999, 
+                image: "https://i.postimg.cc/mkdkSgPH/i-Pad-Pro-12-9.png",
+                description: "Professional tablet with M2 chip, Liquid Retina XDR display, and support for Apple Pencil and Magic Keyboard.",
+                rating: 5,
+                reviews: 228
+            },
+            { 
+                name: "Samsung Galaxy Tab S9", 
+                category: "Tablets", 
+                price: 84999, 
+                
+                image: "https://i.postimg.cc/Z55FZW81/Samsung-Galaxy-Tab-S9.jpg",
+                description: "Premium Android tablet with S Pen included, Dynamic AMOLED 2X display, and powerful Snapdragon processor.",
+                rating: 4,
+                reviews: 119
+            },
+            { 
+                name: "Microsoft Surface Pro 9", 
+                category: "Tablets", 
+                price: 124999, 
+                image: "https://i.postimg.cc/G3vjjw3S/micro-new-surface.jpg",
+                description: "Versatile 2-in-1 device that works as both tablet and laptop. Runs full Windows 11 with Intel Evo processors.",
+                rating: 5,
+                reviews: 142
+            },
+
+           
+
+
+        ];
+
+        // Display products in their respective containers
+        function displayProducts(containerId, category) {
+            const container = document.getElementById(containerId);
+            const categoryProducts = products.filter(product => product.category === category);
+            
+            if (categoryProducts.length === 0) {
+                container.innerHTML = '<div class="no-results col-span-full">No products available in this category</div>';
+                return;
+            }
+            
+            container.innerHTML = categoryProducts.map(product => `
+                <a href="product.html?name=${encodeURIComponent(product.name)}&price=${product.price}&image=${encodeURIComponent(product.image)}&description=${encodeURIComponent(product.description)}&rating=${product.rating}&reviews=${product.reviews}" class="product-card">
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <div class="product-rating">
+                            <div class="stars">${'★'.repeat(product.rating)}${'☆'.repeat(5-product.rating)}</div>
+                            <span class="review-count">(${product.reviews})</span>
+                        </div>
+                        <div class="product-price">₹${product.price}</div>
+                        <button class="add-to-cart" 
+                            onclick="event.preventDefault(); event.stopPropagation(); addToCart('${product.name}', ${product.price}, '${product.image}')">
+                            Add to Cart
+                        </button>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+
+        // Add to cart function
+        function addToCart(name, price, image) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            
+            // Check if product already exists in cart
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    name: name,
+                    price: price,
+                    image: image,
+                    quantity: 1
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            alert(`${name} has been added to your cart!`);
+        }
+
+        // Search products function
+        function searchProducts() {
+            const query = document.getElementById("searchBar").value.toLowerCase().trim();
+            
+            if (!query) {
+                resetSearch();
+                return;
+            }
+            
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(query) || 
+                product.category.toLowerCase().includes(query) ||
+                product.description.toLowerCase().includes(query)
+            );
+
+            // Hide all containers initially
+            document.getElementById("smartphone-container").classList.add("hidden");
+            document.getElementById("tablet-container").classList.add("hidden");
+            document.getElementById("accessory-container").classList.add("hidden");
+            document.getElementById("wearable-container").classList.add("hidden");
+            
+            // Hide "No Results Found" message initially
+            document.getElementById("noResults").classList.add("hidden");
+
+            if (filteredProducts.length > 0) {
+                // Group products by category
+                const productsByCategory = filteredProducts.reduce((acc, product) => {
+                    if (!acc[product.category]) {
+                        acc[product.category] = [];
+                    }
+                    acc[product.category].push(product);
+                    return acc;
+                }, {});
+
+                // Display products in their respective containers
+                for (const [category, categoryProducts] of Object.entries(productsByCategory)) {
+                    let containerId = "";
+                    if (category === "Smartphones") containerId = "smartphone-container";
+                    if (category === "Tablets") containerId = "tablet-container";
+                    if (category === "Accessories") containerId = "accessory-container";
+                    if (category === "Wearables") containerId = "wearable-container";
+
+                    if (containerId) {
+                        const container = document.getElementById(containerId);
+                        container.classList.remove("hidden");
+                        container.innerHTML = categoryProducts.map(product => `
+                            <a href="product.html?name=${encodeURIComponent(product.name)}&price=${product.price}&image=${encodeURIComponent(product.image)}&description=${encodeURIComponent(product.description)}&rating=${product.rating}&reviews=${product.reviews}" class="product-card">
+                                <div class="product-image-container">
+                                    <img src="${product.image}" alt="${product.name}">
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">${product.name}</h3>
+                                    <div class="product-rating">
+                                        <div class="stars">${'★'.repeat(product.rating)}${'☆'.repeat(5-product.rating)}</div>
+                                        <span class="review-count">(${product.reviews})</span>
+                                    </div>
+                                    <div class="product-price">₹${product.price}</div>
+                                    <button class="add-to-cart" 
+                                        onclick="event.preventDefault(); event.stopPropagation(); addToCart('${product.name}', ${product.price}, '${product.image}')">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </a>
+                        `).join('');
+                    }
+                }
+            } else {
+                // Show "No Results Found" message
+                document.getElementById("noResults").classList.remove("hidden");
+            }
+            
+            // Scroll to products section
+            document.getElementById("sellers").scrollIntoView({ behavior: "smooth" });
+        }
+
+        // Reset search to show all products
+        function resetSearch() {
+            document.getElementById("searchBar").value = "";
+            document.getElementById("noResults").classList.add("hidden");
+            
+            // Show all containers
+            document.getElementById("smartphone-container").classList.remove("hidden");
+            document.getElementById("tablet-container").classList.remove("hidden");
+            document.getElementById("accessory-container").classList.remove("hidden");
+            document.getElementById("wearable-container").classList.remove("hidden");
+            
+            // Reload all products
+            displayProducts("smartphone-container", "Smartphones");
+            displayProducts("tablet-container", "Tablets");
+            displayProducts("accessory-container", "Accessories");
+            displayProducts("wearable-container", "Wearables");
+        }
+
+        // Handle Enter key press in search bar
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                searchProducts();
+            }
+        }
+
+        // Toggle profile dropdown
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById("profileDropdown");
+            dropdown.classList.toggle("show");
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function(event) {
+            const dropdown = document.getElementById("profileDropdown");
+            const profileIcon = document.getElementById("profileIcon");
+            
+            if (!event.target.closest(".profile-container")) {
+                dropdown.classList.remove("show");
+            }
+        });
+
+        // Load profile image and name from localStorage
+        function loadProfile() {
+            const userData = JSON.parse(localStorage.getItem("userData")) || {};
+
+            // Update profile picture
+            const profileImage = document.getElementById("profile-icon-image");
+            profileImage.src = userData.profilePicture || "https://i.postimg.cc/3JGZ9FmJ/pngegg.png";
+            profileImage.alt = userData.name ? `${userData.name}'s Profile` : "Profile Picture";
+
+            // Update user greeting in dropdown
+            const userGreeting = document.getElementById("user-greeting");
+            if (userData.name) {
+                userGreeting.innerHTML = `Welcome, <strong>${userData.name}</strong>!`;
+            } else {
+                userGreeting.innerHTML = `Welcome, <strong>Guest</strong>!`;
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem("userData");
+            alert("You have been logged out successfully!");
+            window.location.href = "login.html";
+        }
+
+        // Toggle mobile menu
+        document.getElementById("mobile-menu-button").addEventListener("click", function() {
+            const mobileMenu = document.getElementById("mobile-menu");
+            mobileMenu.classList.toggle("hidden");
+        });
+
+        // Back to top button functionality
+        window.addEventListener("scroll", function() {
+            const backToTopButton = document.getElementById("backToTop");
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.remove("hide");
+                backToTopButton.classList.add("show");
+            } else {
+                backToTopButton.classList.remove("show");
+                backToTopButton.classList.add("hide");
+            }
+        });
+
+        document.getElementById("backToTop").addEventListener("click", function() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        // Form submission handler
+        document.getElementById("contactForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const name = document.getElementById("name").value;
+            alert(`Thank you for your message, ${name}! We'll get back to you soon.`);
+            this.reset();
+        });
+
+        // Newsletter subscription handler
+        document.querySelector("#newsletterEmail + button").addEventListener("click", function() {
+            const email = document.getElementById("newsletterEmail").value;
+            if (email && email.includes("@")) {
+                alert(`Thank you for subscribing with ${email}! You'll receive our newsletter soon.`);
+                document.getElementById("newsletterEmail").value = "";
+            } else {
+                alert("Please enter a valid email address.");
+            }
+        });
+
+        // Logout button event listener
+        document.getElementById("logoutButton").addEventListener("click", function(e) {
+            e.preventDefault();
+            logout();
+        });
+
+        // Initialize page when loaded
+        window.onload = function() {
+            loadProfile();
+            displayProducts("smartphone-container", "Smartphones");
+            displayProducts("tablet-container", "Tablets");
+            displayProducts("accessory-container", "Accessories");
+            displayProducts("wearable-container", "Wearables");
+            updateCartCount();
+            
+            // Add click event to profile icon
+            document.getElementById("profileIcon").addEventListener("click", toggleProfileDropdown);
+        };
+    </script>
+</body>
+</html>

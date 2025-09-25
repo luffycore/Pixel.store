@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - MobileHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #1a56db;
+            --secondary-color: #ffffff;
+            --accent-color: #808080;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333333;
+            --star-color: #FFD700;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+            line-height: 1.6;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .product-image {
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+
+        .add-to-cart {
+            transition: all 0.3s ease;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .add-to-cart:hover {
+            background-color: var(--dark-gray);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button {
+            transition: all 0.3s ease;
+            background-color: var(--secondary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .back-button:hover {
+            background-color: var(--light-gray);
+            transform: translateY(-2px);
+        }
+
+        .related-product {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--secondary-color);
+            border: 1px solid var(--accent-color);
+        }
+
+        .related-product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            padding: 12px 24px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quantity-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid var(--accent-color);
+            background-color: var(--light-gray);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quantity-btn:hover {
+            background-color: var(--accent-color);
+        }
+
+        .quantity-input {
+            width: 4rem;
+            height: 2.5rem;
+            text-align: center;
+            border-top: 1px solid var(--accent-color);
+            border-bottom: 1px solid var(--accent-color);
+            border-left: none;
+            border-right: none;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .category-badge {
+            background-color: var(--light-gray);
+            color: var(--primary-color);
+            border: 1px solid var(--accent-color);
+        }
+
+        .stars {
+            color: var(--star-color);
+        }
+
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .spec-item {
+            background-color: var(--light-gray);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 768px) {
+            .specs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quantity-selector {
+                justify-content: center;
+            }
+            
+            .product-image {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-white text-2xl font-bold flex items-center">
+                        <img src="https://i.postimg.cc/3JGZ9FmJ/pngegg.png" alt="MobileHub Logo" class="h-12 mr-2">
+                        MobileHub
+                    </a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#home" class="text-white hover:text-gray-300 transition">Home</a>
+                    <a href="index.html#sellers" class="text-white hover:text-gray-300 transition">Shop</a>
+                    <a href="index.html#contact" class="text-white hover:text-gray-300 transition">Contact</a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button class="text-white focus:outline-none" id="mobile-menu-button">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="ml-4 relative">
+                    <a href="cart.html" class="text-white hover:text-gray-300 transition">
+                        <i class="fas fa-shopping-cart text-2xl"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-gray-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">0</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="md:hidden hidden pt-4" id="mobile-menu">
+                <a href="index.html#home" class="block py-2 text-white hover:text-gray-300 transition">Home</a>
+                <a href="index.html#sellers" class="block py-2 text-white hover:text-gray-300 transition">Shop</a>
+                <a href="index.html#contact" class="block py-2 text-white hover:text-gray-300 transition">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2 bg-white p-6 rounded-xl shadow-lg border border-gray-300">
+                    <div class="flex justify-center items-center h-96 overflow-hidden">
+                        <img id="product-image" src="" alt="Product Image" class="product-image max-h-full max-w-full object-contain">
+                    </div>
+                </div>
+
+                <div class="md:w-1/2">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-300">
+                        <h1 id="product-name" class="text-3xl font-bold text-gray-800 mb-2"></h1>
+                        <div class="flex items-center mb-4">
+                            <span id="product-category" class="category-badge text-sm font-medium px-2.5 py-0.5 rounded"></span>
+                        </div>
+                        <div class="flex items-center mb-6">
+                            <div class="flex items-center">
+                                <span id="product-rating" class="stars mr-2"></span>
+                                <span id="product-reviews" class="text-gray-600"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <span id="product-price" class="text-3xl font-bold"></span>
+                            <span class="text-gray-500 ml-2">(Inclusive of all taxes)</span>
+                        </div>
+
+                        <!-- Quantity Selector -->
+                        <div class="quantity-selector">
+                            <button class="quantity-btn rounded-l-lg" id="decrease-qty">-</button>
+                            <input type="number" id="product-quantity" class="quantity-input" value="1" min="1" max="99">
+                            <button class="quantity-btn rounded-r-lg" id="increase-qty">+</button>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Description</h3>
+                            <p id="product-description" class="text-gray-600"></p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Key Features</h3>
+                            <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                <li id="feature-1">Premium build quality</li>
+                                <li id="feature-2">Latest technology and performance</li>
+                                <li id="feature-3">High-resolution display</li>
+                                <li id="feature-4">Long-lasting battery life</li>
+                            </ul>
+                        </div>
+
+                        <div class="flex flex-col space-y-4 mb-6">
+                            <button id="add-to-cart" class="add-to-cart px-6 py-3 rounded-lg font-semibold">
+                                <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+                            </button>
+                        </div>
+
+                        <div class="flex space-x-4">
+                            <button class="back-button text-gray-800 px-6 py-3 rounded-lg font-semibold">
+                                <i class="fas fa-arrow-left mr-2"></i> Back to Shop
+                            </button>
+                            <button id="buy-now" class="bg-gray-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">
+                                <i class="fas fa-bolt mr-2"></i> Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specifications Section -->
+            <div class="mt-12 bg-white p-6 rounded-xl shadow-lg border border-gray-300">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Specifications</h2>
+                <div id="product-specs" class="specs-grid">
+                    <!-- Specifications will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Related Products Section -->
+            <div class="mt-16">
+                <h2 class="text-2xl font-bold text-gray-800 mb-8">You May Also Like</h2>
+                <div id="related-products" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Related products will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <img src="https://i.postimg.cc/2jXCTJHh/image.jpg" alt="MobileHub Logo" class="h-12 mb-4">
+                    <p class="mb-4">The customer is at the heart of our unique business model, which includes design.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-gray-400 transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="hover:text-gray-400 transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="hover:text-gray-400 transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-gray-400 transition"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-400">SHOPPING</h4>
+                    <ul class="space-y-2">
+                        <li><a href="smartphones.html" class="hover:text-gray-400 transition">Smartphones</a></li>
+                        <li><a href="tablets.html" class="hover:text-gray-400 transition">Tablets</a></li>
+                        <li><a href="accessories.html" class="hover:text-gray-400 transition">Accessories</a></li>
+                        <li><a href="wearables.html" class="hover:text-gray-400 transition">Wearables</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-400">CUSTOMER SERVICE</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#contact" class="hover:text-gray-400 transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-gray-400 transition">Payment Method</a></li>
+                        <li><a href="#" class="hover:text-gray-400 transition">Delivery</a></li>
+                        <li><a href="#" class="hover:text-gray-400 transition">Return and Exchange</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4 text-gray-400">CONTACT INFO</h4>
+                    <ul class="space-y-2">
+                        <li><i class="fas fa-map-marker-alt mr-2"></i> Tech Street, Mumbai</li>
+                        <li><i class="fas fa-phone mr-2"></i> +91 887943844</li>
+                        <li><i class="fas fa-envelope mr-2"></i> info@mobilehub.com</li>
+                        <li><i class="fas fa-clock mr-2"></i> Mon-Sat: 8AM - 8PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 text-center text-gray-400">
+                <p>&copy; 2025 MobileHub. All rights reserved. Design and Code by Krishna & Nitesh</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toast notification function
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // Get product details from URL parameters
+        function getProductDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Validate required parameters
+            if (!urlParams.has('name') || !urlParams.has('price') || !urlParams.has('image')) {
+                console.error('Missing required product parameters');
+                return null;
+            }
+            
+            const price = parseFloat(urlParams.get('price'));
+            if (isNaN(price) || price <= 0) {
+                console.error('Invalid price parameter');
+                return null;
+            }
+            
+            return {
+                name: urlParams.get('name'),
+                price: price,
+                image: urlParams.get('image'),
+                description: urlParams.get('description') || 'No description available',
+                rating: parseInt(urlParams.get('rating')) || 4,
+                reviews: parseInt(urlParams.get('reviews')) || 0,
+                category: urlParams.get('category') || 'Smartphones'
+            };
+        }
+
+        // Display product details on the page
+        function displayProductDetails() {
+            const product = getProductDetails();
+            
+            if (!product) {
+                showToast('Product information is incomplete. Redirecting...');
+                setTimeout(() => window.location.href = 'index.html', 2000);
+                return;
+            }
+
+            // Set product details
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-price').textContent = `₹${product.price.toFixed(2)}`;
+            document.getElementById('product-image').src = product.image;
+            document.getElementById('product-image').alt = product.name;
+            document.getElementById('product-description').textContent = product.description;
+            document.getElementById('product-category').textContent = product.category;
+
+            // Set rating stars
+            const ratingElement = document.getElementById('product-rating');
+            const fullStars = Math.floor(product.rating);
+            const halfStar = product.rating % 1 >= 0.5;
+            
+            let starsHTML = '';
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '<i class="fas fa-star"></i>';
+            }
+            if (halfStar) {
+                starsHTML += '<i class="fas fa-star-half-alt"></i>';
+            }
+            for (let i = 0; i < 5 - Math.ceil(product.rating); i++) {
+                starsHTML += '<i class="far fa-star"></i>';
+            }
+            
+            ratingElement.innerHTML = starsHTML;
+            document.getElementById('product-reviews').textContent = `(${product.reviews} reviews)`;
+
+            // Set features based on product category
+            setProductFeatures(product.category);
+            
+            // Set specifications
+            setProductSpecifications(product);
+        }
+
+        // Set product features based on category
+        function setProductFeatures(category) {
+            const features = {
+                'Smartphones': [
+                    'Premium build quality with durable materials',
+                    'Latest processor for smooth performance',
+                    'High-resolution AMOLED display',
+                    'All-day battery life with fast charging'
+                ],
+                'Tablets': [
+                    'Large, vibrant display for media consumption',
+                    'Powerful processor for multitasking',
+                    'Long battery life for extended use',
+                    'Stylus support for creative work'
+                ],
+                'Accessories': [
+                    'Premium materials and construction',
+                    'Compatible with multiple devices',
+                    'Enhanced functionality and convenience',
+                    'Durable design for long-term use'
+                ],
+                'Wearables': [
+                    'Advanced health and fitness tracking',
+                    'Long battery life with efficient power management',
+                    'Seamless connectivity with smartphones',
+                    'Customizable watch faces and bands'
+                ]
+            };
+
+            const defaultFeatures = [
+                'Premium build quality',
+                'Latest technology and performance',
+                'High-resolution display',
+                'Long-lasting battery life'
+            ];
+
+            const featureList = features[category] || defaultFeatures;
+            
+            for (let i = 1; i <= 4; i++) {
+                const featureElement = document.getElementById(`feature-${i}`);
+                if (featureElement && featureList[i-1]) {
+                    featureElement.textContent = featureList[i-1];
+                }
+            }
+        }
+
+        // Set product specifications
+        function setProductSpecifications(product) {
+            const specsContainer = document.getElementById('product-specs');
+            
+            // Default specifications based on category
+            const defaultSpecs = {
+                'Smartphones': [
+                    { name: 'Display', value: '6.1-inch Super Retina XDR' },
+                    { name: 'Processor', value: 'A16 Bionic chip' },
+                    { name: 'Storage', value: '128GB / 256GB / 512GB' },
+                    { name: 'Camera', value: '48MP Main, 12MP Ultra Wide' },
+                    { name: 'Battery', value: 'Up to 20 hours video playback' },
+                    { name: 'Operating System', value: 'iOS 17' }
+                ],
+                'Tablets': [
+                    { name: 'Display', value: '10.9-inch Liquid Retina' },
+                    { name: 'Processor', value: 'A14 Bionic chip' },
+                    { name: 'Storage', value: '64GB / 256GB' },
+                    { name: 'Camera', value: '12MP Wide camera' },
+                    { name: 'Battery', value: 'Up to 10 hours' },
+                    { name: 'Operating System', value: 'iPadOS 17' }
+                ],
+                'Accessories': [
+                    { name: 'Compatibility', value: 'Universal / Device-specific' },
+                    { name: 'Connection', value: 'Wireless / Wired' },
+                    { name: 'Material', value: 'Premium materials' },
+                    { name: 'Warranty', value: '1 year manufacturer warranty' }
+                ],
+                'Wearables': [
+                    { name: 'Display', value: 'Always-On Retina LTPO OLED' },
+                    { name: 'Battery Life', value: 'Up to 18 hours' },
+                    { name: 'Health Monitoring', value: 'Heart rate, ECG, Blood Oxygen' },
+                    { name: 'Water Resistance', value: 'Up to 50 meters' },
+                    { name: 'Connectivity', value: 'GPS, Cellular, Wi-Fi, Bluetooth' }
+                ]
+            };
+
+            const specs = defaultSpecs[product.category] || [
+                { name: 'Category', value: product.category },
+                { name: 'Description', value: product.description.substring(0, 50) + '...' }
+            ];
+
+            specsContainer.innerHTML = specs.map(spec => `
+                <div class="spec-item">
+                    <div class="font-semibold text-gray-800">${spec.name}</div>
+                    <div class="text-gray-600">${spec.value}</div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize quantity selector
+        function setupQuantitySelector() {
+            const quantityInput = document.getElementById('product-quantity');
+            const decreaseBtn = document.getElementById('decrease-qty');
+            const increaseBtn = document.getElementById('increase-qty');
+
+            // Handle decrease button
+            decreaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+
+            // Handle increase button
+            increaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue < 99) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+
+            // Validate input
+            quantityInput.addEventListener('change', () => {
+                let value = parseInt(quantityInput.value);
+                if (isNaN(value) || value < 1) {
+                    quantityInput.value = 1;
+                } else if (value > 99) {
+                    quantityInput.value = 99;
+                }
+            });
+        }
+
+        // Get current quantity
+        function getCurrentQuantity() {
+            const quantityInput = document.getElementById('product-quantity');
+            return parseInt(quantityInput.value) || 1;
+        }
+
+        // Add product to cart with quantity
+        function addToCart(product, quantity = 1) {
+            try {
+                // Validate inputs
+                if (!product || typeof product !== 'object') {
+                    throw new Error('Invalid product');
+                }
+                
+                if (typeof quantity !== 'number' || quantity <= 0 || !Number.isInteger(quantity)) {
+                    throw new Error('Quantity must be a positive integer');
+                }
+
+                // Get current cart from localStorage
+                let cart;
+                try {
+                    cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    if (!Array.isArray(cart)) {
+                        throw new Error('Invalid cart data');
+                    }
+                } catch (e) {
+                    // If cart data is corrupted, start fresh
+                    console.warn('Cart data corrupted, resetting cart');
+                    cart = [];
+                }
+
+                // Check if product already in cart
+                const existingItemIndex = cart.findIndex(item => item.name === product.name);
+
+                if (existingItemIndex >= 0) {
+                    // Update quantity if product already in cart
+                    cart[existingItemIndex].quantity += quantity;
+                } else {
+                    // Add new item to cart
+                    cart.push({
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        quantity: quantity
+                    });
+                }
+
+                // Save back to localStorage
+                localStorage.setItem('cart', JSON.stringify(cart));
+                
+                // Update cart count
+                updateCartCount();
+                
+                return true; // Indicate success
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                return false; // Indicate failure
+            }
+        }
+
+        // Load related products
+        function loadRelatedProducts() {
+            const product = getProductDetails();
+            if (!product) return;
+
+            const container = document.getElementById('related-products');
+
+            // Mobile products data
+            const mobileProducts = [
+                {
+                    name: "iPhone 15 Pro",
+                    category: "Smartphones",
+                    price: 99999,
+                    image: "https://i.postimg.cc/YS7c5cDX/peace-lily.png",
+                    description: "The latest iPhone with titanium design, A17 Pro chip, and advanced camera system.",
+                    rating: 5,
+                    reviews: 124
+                },
+                {
+                    name: "Samsung Galaxy S24",
+                    category: "Smartphones",
+                    price: 14999,
+                    image: "https://i.postimg.cc/Kc1Zr26L/Spider-Plant.jpg",
+                    description: "Powerful Android smartphone with AI features, stunning display, and professional-grade cameras.",
+                    rating: 5,
+                    reviews: 98
+                },
+                {
+                    name: "Google Pixel 7 A",
+                    category: "Smartphones",
+                    price: 3999,
+                    image: "https://i.postimg.cc/dQgJ5fFf/ZZ-Plant.webp",
+                    description: "Pure Android experience with Google's Tensor G3 chip. Outstanding camera performance.",
+                    rating: 4,
+                    reviews: 132
+                },
+                {
+                    name: "OnePlus 12",
+                    category: "Smartphones",
+                    price: 5999,
+                    image: "https://i.postimg.cc/wvWSR1qP/pngegg-10.png",
+                    description: "Flagship killer with Snapdragon 8 Gen 3, Hasselblad camera, and ultra-fast charging.",
+                    rating: 4,
+                    reviews: 85
+                },
+                {
+                    name: "iPad Pro 12.9",
+                    category: "Tablets",
+                    price: 109999,
+                    image: "https://i.postimg.cc/1tzdSyGK/pngegg-14.png",
+                    description: "Professional tablet with M2 chip, Liquid Retina XDR display, and Apple Pencil support.",
+                    rating: 5,
+                    reviews: 228
+                },
+                {
+                    name: "Samsung Galaxy Tab S9",
+                    category: "Tablets",
+                    price: 84999,
+                    image: "https://i.postimg.cc/Nf2WLGWJ/pngegg-13.png",
+                    description: "Premium Android tablet with S Pen included, Dynamic AMOLED 2X display.",
+                    rating: 4,
+                    reviews: 119
+                },
+                {
+                    name: "Apple Watch Series 9",
+                    category: "Wearables",
+                    price: 41999,
+                    image: "https://i.postimg.cc/5tgrDXC0/pngegg-17.png",
+                    description: "Advanced smartwatch with health monitoring, fitness tracking, and seamless connectivity.",
+                    rating: 5,
+                    reviews: 142
+                },
+                {
+                    name: "AirPods Pro",
+                    category: "Accessories",
+                    price: 24999,
+                    image: "https://i.postimg.cc/y6bMV3r3/pngegg-12.png",
+                    description: "Wireless earbuds with active noise cancellation, transparency mode, and spatial audio.",
+                    rating: 4,
+                    reviews: 72
+                }
+            ];
+
+            // Filter related products (same category, excluding current product)
+            let relatedProducts = mobileProducts.filter(p => 
+                p.category === product.category && p.name !== product.name
+            );
+
+            // If not enough same-category products, add some from other categories
+            if (relatedProducts.length < 4) {
+                const otherProducts = mobileProducts.filter(p => 
+                    p.category !== product.category && p.name !== product.name
+                ).slice(0, 4 - relatedProducts.length);
+                
+                relatedProducts = [...relatedProducts, ...otherProducts];
+            }
+
+            // Limit to 4 products
+            relatedProducts = relatedProducts.slice(0, 4);
+
+            // Display related products
+            container.innerHTML = relatedProducts.map(product => `
+                <div class="related-product rounded-lg overflow-hidden"
+                    onclick="redirectToProduct('${escapeHtml(product.name)}', '${product.price}', '${escapeHtml(product.image)}', '${escapeHtml(product.description)}', '${product.rating}', '${product.reviews}', '${escapeHtml(product.category)}')">
+                    <div class="h-48 flex items-center justify-center p-4">
+                        <img src="${product.image}" alt="${product.name}" class="max-h-full max-w-full object-contain">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800 mb-1">${product.name}</h3>
+                        <div class="flex items-center mb-2">
+                            <span class="stars text-sm">${'★'.repeat(product.rating)}${'☆'.repeat(5-product.rating)}</span>
+                            <span class="text-gray-600 text-sm ml-1">(${product.reviews})</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="font-bold">₹${product.price.toFixed(2)}</span>
+                            <button class="bg-black text-white px-3 py-1 rounded hover:bg-gray-800 transition"
+                                    onclick="event.stopPropagation(); // Prevent redirection when clicking cart
+                                             addToCart({name: '${escapeHtml(product.name)}', price: ${product.price}, image: '${escapeHtml(product.image)}'}, 1);
+                                             showToast('1 ${escapeHtml(product.name)} added to cart!');">
+                                <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Helper function to escape HTML for description
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        // Redirect to product details page
+        function redirectToProduct(name, price, image, description, rating, reviews, category) {
+            const params = new URLSearchParams();
+            params.append('name', name);
+            params.append('price', price);
+            params.append('image', image);
+            params.append('description', description);
+            params.append('rating', rating);
+            params.append('reviews', reviews);
+            params.append('category', category);
+
+            window.location.href = `product.html?${params.toString()}`;
+        }
+
+        // Setup Add to Cart button
+        function setupAddToCart() {
+            const addToCartBtn = document.getElementById('add-to-cart');
+
+            addToCartBtn.addEventListener('click', () => {
+                const product = getProductDetails();
+                if (!product) return;
+
+                const quantity = getCurrentQuantity();
+
+                // Add product to cart with selected quantity
+                const success = addToCart(product, quantity);
+
+                if (success) {
+                    showToast(`${quantity} ${product.name}${quantity > 1 ? 's' : ''} added to cart!`);
+                } else {
+                    showToast('Failed to add item to cart. Please try again.');
+                }
+            });
+        }
+
+        // Setup Buy Now button
+        function setupBuyNow() {
+            const buyNowBtn = document.getElementById('buy-now');
+
+            buyNowBtn.addEventListener('click', () => {
+                const product = getProductDetails();
+                if (!product) return;
+
+                const quantity = getCurrentQuantity();
+
+                // Add product to cart with selected quantity
+                const success = addToCart(product, quantity);
+
+                if (success) {
+                    // Redirect to cart page
+                    window.location.href = 'cart.html';
+                } else {
+                    showToast('Failed to add item to cart. Please try again.');
+                }
+            });
+        }
+
+        // Update cart count in navbar
+        function updateCartCount() {
+            try {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                document.getElementById('cart-count').textContent = totalItems;
+                
+                // Add animation to cart icon
+                const cartIcon = document.querySelector('.fa-shopping-cart').parentElement;
+                cartIcon.classList.add('animate-ping');
+                setTimeout(() => {
+                    cartIcon.classList.remove('animate-ping');
+                }, 500);
+            } catch (e) {
+                console.error('Error updating cart count:', e);
+            }
+        }
+
+        // Back button functionality
+        function setupBackButton() {
+            const backButton = document.querySelector('.back-button');
+            backButton.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        // Mobile menu toggle
+        function setupMobileMenu() {
+            document.getElementById('mobile-menu-button').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Initialize page when loaded
+        window.onload = function() {
+            displayProductDetails();
+            setupQuantitySelector();
+            loadRelatedProducts();
+            setupAddToCart();
+            setupBuyNow();
+            setupBackButton();
+            setupMobileMenu();
+            updateCartCount();
+        };
+    </script>
+</body>
+</html>
